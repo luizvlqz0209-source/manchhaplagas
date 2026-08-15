@@ -42,7 +42,7 @@ export async function onRequestPost(context) {
         await fetch(env.GOOGLE_SHEET_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: email })
+          body: JSON.stringify({ email: email, message: "Suscripción web" })
         });
       } catch (sheetError) {
         console.error("Error al guardar en Google Sheets:", sheetError);
