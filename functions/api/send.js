@@ -10,7 +10,7 @@ export async function onRequestPost(context) {
       });
     }
 
-    // Petición a la API de Resend usando tu clave guardada en Cloudflare
+    // 1. Petición a la API de Resend
     const resendResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -37,6 +37,18 @@ export async function onRequestPost(context) {
     });
 
     if (resendResponse.ok) {
+      // 2. Registro en Google Sheets de forma privada
+      try {
+        await fetch(env.GOOGLE_SHEET_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: email })
+        });
+      } catch (sheetError) {
+        console.error("Error al guardar en Google Sheets:", sheetError);
+        // No devolvemos error al usuario aquí porque el correo ya se envió correctamente
+      }
+
       return new Response(JSON.stringify({ success: true }), {
         headers: { "Content-Type": "application/json" }
       });
