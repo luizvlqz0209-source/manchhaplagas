@@ -37,12 +37,13 @@ export async function onRequestPost(context) {
     });
 
     if (resendResponse.ok) {
-      // 2. Registro en Google Sheets de forma privada
+      // 2. Registro en Google Sheets adaptado mediante GET y no-cors para evitar bloqueos
       try {
-        await fetch(env.GOOGLE_SHEET_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: email, message: "Suscripción web" })
+        const sheetUrl = `${env.GOOGLE_SHEET_URL}?email=${encodeURIComponent(email)}&message=${encodeURIComponent("Suscripción web")}`;
+        await fetch(sheetUrl, {
+          method: "GET",
+          mode: "no-cors",
+          cache: "no-cache"
         });
       } catch (sheetError) {
         console.error("Error al guardar en Google Sheets:", sheetError);
